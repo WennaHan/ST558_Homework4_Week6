@@ -153,16 +153,21 @@ getMetrics(incorrect_resp, pred)
 ```
 
 ## Task 3 - Querying an API and a Tidy-Style Function
-1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.\
-2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!
-
+**1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.**
 ```{r}
 library(httr)
-info <- httr::GET("https://newsapi.org/")
-str(info)
 library(jsonlite)
-parsed <- fromJSON(rawToChar(info$content))
-parsed
+# get information about top businesses
+business_info <- httr::GET("https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=d0c08c5bbcd3476aa22de1b997561871")
+str(business_info)
+```
+
+**2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!**
+```{r}
+library(tidyverse)
+parsed_data <- fromJSON(rawToChar(business_info$content))
+article_info <- as_tibble(parsed_data$articles)
+article_info
 ```
 
 3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.
@@ -170,7 +175,7 @@ parsed
 # Define the function to query the news API
 query_news_api <- function(query, from_date, api_key) {
   # Construct the URL for the API request
-  base_url <- "https://newsapi.org/v2/everything"
+  base_url <- "https://newsapi.org"
   params <- list(
     q = query,
     from = from_date,
@@ -181,6 +186,10 @@ query_news_api <- function(query, from_date, api_key) {
   response <- GET(url = base_url, query = params)
   
   # Parse the JSON content
+  parsed_data <- fromJSON(rawToChar(business_info$content))
+  article_info <- as_tibble(parsed_data$articles)
+  article_info
+  ????????????????
   content_data <- content(response, as = "text", encoding = "UTF-8")
   parsed_data <- fromJSON(content_data, flatten = TRUE)
   
