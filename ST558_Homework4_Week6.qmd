@@ -157,15 +157,16 @@ getMetrics(incorrect_resp, pred)
 ```{r}
 library(httr)
 library(jsonlite)
-# get information about top businesses
+# get information about businesses
 business_info <- httr::GET("https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=d0c08c5bbcd3476aa22de1b997561871")
-str(business_info)
+str(business_info, max.level = 1)
 ```
 
 **2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!**
 ```{r}
 library(tidyverse)
 parsed_data <- fromJSON(rawToChar(business_info$content))
+str(parsed_data) #check what's in content
 article_info <- as_tibble(parsed_data$articles)
 article_info
 ```
@@ -185,23 +186,26 @@ query_news_api <- function(query, from_date, api_key) {
   # Make the GET request
   response <- GET(url = base_url, query = params)
   
+  # Check if the request was successful
+  if (http_status(response)$category != "Success") {
+    stop("Failed to fetch data from the API.")
+  }
+  
   # Parse the JSON content
-  parsed_data <- fromJSON(rawToChar(business_info$content))
+  parsed_data <- fromJSON(rawToChar(response$content))
   article_info <- as_tibble(parsed_data$articles)
-  article_info
-  ????????????????
-  content_data <- content(response, as = "text", encoding = "UTF-8")
-  parsed_data <- fromJSON(content_data, flatten = TRUE)
   
-  # Extract the articles data frame
-  articles_df <- as.data.frame(parsed_data$articles)
-  
-  return(articles_df)
+  return(article_info)
 }
 
 ```
 
 ```{r}
-info$content
+# Example usage
+api_key <- "d0c08c5bbcd3476aa22de1b997561871"
+
+# Query for the topic "Business" from the past 30 days
+result_business <- query_news_api(query = "Business", from_date = Sys.Date() - 30, api_key = api_key)
+print(result_business)
 ```
 
