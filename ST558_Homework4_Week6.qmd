@@ -4,23 +4,195 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Task 1: Conceptual Questions
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+1.  What is the purpose of the lapply() function? What is the equivalent purrr function?\
+    \> lappy() is used to apply function to lists and obtain list objects. purr::map() is equivalent to lapply().
 
-## Running Code
+2.  Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())\
+    \>lapply(my_list, function(x) cor(x, method = "kendall"))
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+3.  What are two advantages of using purrr functions instead of the BaseR apply family?\
+    \> Main advantage is more consistency and some helper functions. purr has much greater consistency between the functions. The helpers allow us to write compact code for common special cases. Moreover, purr provides more functions that fills in some handy map variants that are absent from base R.
+
+4.  What is a side-effect function?\
+    \> A side-effect function is a function that performs an action that affects the state of the system or interacts with the outside world in addition to (or instead of) returning a value, such as print(), write_csv(). For example, modifying a global variable, writing to a file, updating a database, printing to a console, or changing the user interface.
+
+5.  Why can you name a variable sd in a function and not cause any issues with the sd function?\
+    \> When we call a function, it creates temporary function environments, thus it will not overwrite sd function.
+
+## Task 2 - Writing R Functions
+
+**1. Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.**\
+- If a value is missing for the vector of responses (i.e. an NA is present), allow for additional arguments to the mean() function (elipses) that removes the NA values in the computation.
 
 ```{r}
-1 + 1
+getRMSE <- function(resp, pred, ...) {
+  # calculate the residuals
+  residuals <- resp - pred
+  # Calculate the Mean Squared Error (MSE)
+  mse <- mean(residuals^2, ...)
+  # Calculate the Root Mean Square Error (RMSE)
+  rmse <- sqrt(mse)
+  return(rmse)
+}
 ```
 
-You can add options to executable code like this
+**2. Run the following code to create some response values and predictions.**\
+- Test your RMSE function using this data.
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+# test function
+getRMSE(resp, pred)
+```
+
+- Repeat after replacing two of the response values with missing values (NA_real\_).\
+- Test your RMSE function with and without specifying the behavior to deal with missing values.
 
 ```{r}
-#| echo: false
-2 * 2
+# replace two of the response values with missing values (40th & 70th)
+resp_with_na <- resp
+resp_with_na[c(40, 70)] <- NA_real_
+
+# test the function with specifying na.rm = TRUE
+getRMSE(resp_with_na, pred, na.rm = TRUE)
+
+# test the function without specifying na.rm = TRUE
+getRMSE(resp_with_na, pred)
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+**3. Write a function called getMAE() that follows the specifications of the getRMSE() function.**
+
+```{r}
+getMAE <- function(resp, pred, ...) {
+  # calculate the residuals
+  residuals <- resp - pred
+  # Calculate the Mean Absolute Error (MAE)
+  mae <- mean(abs(residuals), ...)
+  return(mae)
+}
+```
+
+**4. Test the MAE function using the generated data.**
+
+```{r}
+# test function
+getMAE(resp, pred)
+```
+
+- Repeat after replacing two of the response values with missing values (NA_real\_).\
+- Test your MAE function with and without specifying the behavior to deal with missing values.
+
+```{r}
+# test the function with specifying na.rm = TRUE
+getMAE(resp_with_na, pred, na.rm = TRUE)
+
+# test the function without specifying na.rm = TRUE
+getMAE(resp_with_na, pred)
+```
+
+**5. Create a wrapper function that can be used to get either or both metrics returned with a single function call. Do not rewrite your above two functions, call them inside the wrapper function (we would call the getRMSE() and getMAE() functions helper functions). When returning your values, give them appropriate names.**\
+- The function should check that two numeric (atomic) vectors have been passed (consider is.vector(), is.atomic(), and is.numeric()). If not, a message should print and the function should exit.\
+- The function should return both metrics by default and include names. The behavior should be able to be changed using a character string of metrics to find.
+
+```{r}
+getMetrics <- function(resp, pred, metrics = c("RMSE", "MAE"), ...) {
+   # Ensure the inputs are atomic numeric vectors of the same length
+  if (!(is.vector(resp) && is.atomic(resp) && is.numeric(resp) &&
+        is.vector(pred) && is.atomic(pred) && is.numeric(pred))) {
+    stop("Both responses and predictions must be atomic numeric vectors.")
+  }
+  
+  results <- list()
+  
+  if ("RMSE" %in% metrics) {
+    results$RMSE <- getRMSE(resp, pred, ...)
+  }
+  
+  if ("MAE" %in% metrics) {
+    results$MAE <- getMAE(resp, pred, ...)
+  }
+  
+  return(results)
+}
+```
+
+**6. Test the new function using the generated data.**\
+- Call it once asking for each metric individually and once specifying both metrics.\
+
+```{r}
+# ask for RMSE only
+getMetrics(resp, pred, metrics = c("RMSE"))
+# ask for MAE only
+getMetrics(resp, pred, metrics = c("MAE"))
+# ask for both RMSE and MAE
+getMetrics(resp, pred, metrics = c("RMSE", "MAE"))
+```
+
+-   Repeat with replacing two of the response values with missing values (NA_real\_).\
+
+```{r}
+# test the function with specifying na.rm = TRUE
+getMetrics(resp_with_na, pred, na.rm = TRUE)
+
+# test the function without specifying na.rm = TRUE
+getMetrics(resp_with_na, pred)
+```
+
+-   Finally, test the function by passing it incorrect data (i.e. a data frame or something else instead of vectors)
+
+```{r}
+incorrect_resp <- as.data.frame(resp)
+# test the function with incorrect data
+getMetrics(incorrect_resp, pred)
+```
+
+## Task 3 - Querying an API and a Tidy-Style Function
+1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.\
+2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!
+
+```{r}
+library(httr)
+info <- httr::GET("https://newsapi.org/")
+str(info)
+library(jsonlite)
+parsed <- fromJSON(rawToChar(info$content))
+parsed
+```
+
+3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.
+```{r}
+# Define the function to query the news API
+query_news_api <- function(query, from_date, api_key) {
+  # Construct the URL for the API request
+  base_url <- "https://newsapi.org/v2/everything"
+  params <- list(
+    q = query,
+    from = from_date,
+    apiKey = api_key
+  )
+  
+  # Make the GET request
+  response <- GET(url = base_url, query = params)
+  
+  # Parse the JSON content
+  content_data <- content(response, as = "text", encoding = "UTF-8")
+  parsed_data <- fromJSON(content_data, flatten = TRUE)
+  
+  # Extract the articles data frame
+  articles_df <- as.data.frame(parsed_data$articles)
+  
+  return(articles_df)
+}
+
+```
+
+```{r}
+info$content
+```
+
