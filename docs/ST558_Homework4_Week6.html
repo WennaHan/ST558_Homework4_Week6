@@ -334,13 +334,13 @@ $MAE
 <pre><code>List of 10
  $ url        : chr "https://newsapi.org/v2/top-headlines?country=us&amp;category=business&amp;apiKey=d0c08c5bbcd3476aa22de1b997561871"
  $ status_code: int 200
- $ headers    :List of 14
+ $ headers    :List of 12
   ..- attr(*, "class")= chr [1:2] "insensitive" "list"
  $ all_headers:List of 1
  $ cookies    :'data.frame':    0 obs. of  7 variables:
  $ content    : raw [1:16580] 7b 22 73 74 ...
- $ date       : POSIXct[1:1], format: "2024-06-24 04:50:36"
- $ times      : Named num [1:6] 0 0.00581 0.01939 0.04385 0.0876 ...
+ $ date       : POSIXct[1:1], format: "2024-06-24 04:53:38"
+ $ times      : Named num [1:6] 0 0.00619 0.01897 0.03893 0.18202 ...
   ..- attr(*, "names")= chr [1:6] "redirect" "namelookup" "connect" "pretransfer" ...
  $ request    :List of 7
   ..- attr(*, "class")= chr "request"
@@ -434,9 +434,7 @@ $MAE
 20 &lt;NA&gt;      New … Brook… "Hun… The produc… http… https://n… 2024-06-22… "What …</code></pre>
 </div>
 </div>
-<ol start="3" type="1">
-<li>Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.</li>
-</ol>
+<p><strong>3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key. Then, use the function twice.</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the function to query the news API</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>query_news_api <span class="ot">&lt;-</span> <span class="cf">function</span>(query, from_date, api_key) {</span>

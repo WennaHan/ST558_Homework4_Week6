@@ -179,7 +179,7 @@ article_info <- article_info |>
 article_info
 ```
 
-3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.
+**3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key. Then, use the function twice.**
 ```{r}
 # Define the function to query the news API
 query_news_api <- function(query, from_date, api_key) {
