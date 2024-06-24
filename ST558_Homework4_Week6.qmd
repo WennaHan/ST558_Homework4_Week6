@@ -168,6 +168,19 @@ library(tidyverse)
 parsed_data <- fromJSON(rawToChar(business_info$content))
 str(parsed_data) #check what's in content
 article_info <- as_tibble(parsed_data$articles)
+# change the first column to list column
+article_info <- select(article_info,-source)
+article_info
+```
+
+
+
+# change the first column to list column
+article_info <- article_info |>
+  mutate(id=article_info$source$id,
+         source=article_info$source$name) |>
+  rename(name=source) |>
+  select(id, name, everything())
 article_info
 ```
 
@@ -176,15 +189,17 @@ article_info
 # Define the function to query the news API
 query_news_api <- function(query, from_date, api_key) {
   # Construct the URL for the API request
-  base_url <- "https://newsapi.org"
+  base_url <- "https://newsapi.org/v2/everything"
   params <- list(
     q = query,
     from = from_date,
-    apiKey = api_key
+    apiKey = api_key,
+    pageSize = 10
   )
   
   # Make the GET request
   response <- GET(url = base_url, query = params)
+  print(response)
   
   # Check if the request was successful
   if (http_status(response)$category != "Success") {
@@ -197,7 +212,6 @@ query_news_api <- function(query, from_date, api_key) {
   
   return(article_info)
 }
-
 ```
 
 ```{r}
@@ -207,5 +221,19 @@ api_key <- "d0c08c5bbcd3476aa22de1b997561871"
 # Query for the topic "Business" from the past 30 days
 result_business <- query_news_api(query = "Business", from_date = Sys.Date() - 30, api_key = api_key)
 print(result_business)
+```
+
+```{r}
+# Query for the topic "Tesla" from 2024-04-30
+result_tesla <- query_news_api(query = "Tesla", from_date = as.Date("2024-04-30"), api_key = api_key)
+print(result_tesla)
+```
+```{r}
+# Query for the topic "Tesla" from 2024-04-30
+result_fashion <- query_news_api(query = "fashion", from_date = 2024-04-30, api_key = api_key)
+print(result_fashion)
+```
+```{r}
+result_fashion$source
 ```
 
