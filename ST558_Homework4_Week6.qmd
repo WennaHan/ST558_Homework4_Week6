@@ -144,13 +144,14 @@ getMetrics(resp_with_na, pred, na.rm = TRUE)
 getMetrics(resp_with_na, pred)
 ```
 
--   Finally, test the function by passing it incorrect data (i.e. a data frame or something else instead of vectors)
+-   Finally, test the function by passing it incorrect data (i.e. a data frame or something else instead of vectors). 
 
-```{r}
+```{r,eval=FALSE}
 incorrect_resp <- as.data.frame(resp)
 # test the function with incorrect data
 getMetrics(incorrect_resp, pred)
 ```
+As expected, the output shows: "Error in as.data.frame(resp) : object 'resp' not found". 
 
 ## Task 3 - Querying an API and a Tidy-Style Function
 **1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.**
@@ -168,19 +169,13 @@ library(tidyverse)
 parsed_data <- fromJSON(rawToChar(business_info$content))
 str(parsed_data) #check what's in content
 article_info <- as_tibble(parsed_data$articles)
-# change the first column to list column
-article_info <- select(article_info,-source)
-article_info
-```
 
-
-
-# change the first column to list column
+str(article_info$source) #check what's in the first column
+# change the first data frame column to two list column
 article_info <- article_info |>
   mutate(id=article_info$source$id,
-         source=article_info$source$name) |>
-  rename(name=source) |>
-  select(id, name, everything())
+         name=article_info$source$name) |>
+  select(id, name, everything(), -source)
 article_info
 ```
 
@@ -193,13 +188,10 @@ query_news_api <- function(query, from_date, api_key) {
   params <- list(
     q = query,
     from = from_date,
-    apiKey = api_key,
-    pageSize = 10
-  )
+    apiKey = api_key)
   
   # Make the GET request
   response <- GET(url = base_url, query = params)
-  print(response)
   
   # Check if the request was successful
   if (http_status(response)$category != "Success") {
@@ -210,30 +202,25 @@ query_news_api <- function(query, from_date, api_key) {
   parsed_data <- fromJSON(rawToChar(response$content))
   article_info <- as_tibble(parsed_data$articles)
   
+  # change the first data frame column to two list column
+  article_info <- article_info |>
+    mutate(id=article_info$source$id,
+           name=article_info$source$name) |>
+    select(id, name, everything(), -source)
+
   return(article_info)
 }
-```
 
-```{r}
-# Example usage
+# Use the function twice
 api_key <- "d0c08c5bbcd3476aa22de1b997561871"
 
-# Query for the topic "Business" from the past 30 days
+# test 1: Query for the topic "Business" from the past 30 days
 result_business <- query_news_api(query = "Business", from_date = Sys.Date() - 30, api_key = api_key)
 print(result_business)
-```
 
-```{r}
-# Query for the topic "Tesla" from 2024-04-30
-result_tesla <- query_news_api(query = "Tesla", from_date = as.Date("2024-04-30"), api_key = api_key)
+# test 2:Query for the topic "Tesla" from 2024-04-30
+result_tesla <- query_news_api(query = "Tesla", from_date = 2024-04-30, api_key = api_key)
 print(result_tesla)
 ```
-```{r}
-# Query for the topic "Tesla" from 2024-04-30
-result_fashion <- query_news_api(query = "fashion", from_date = 2024-04-30, api_key = api_key)
-print(result_fashion)
-```
-```{r}
-result_fashion$source
-```
+
 

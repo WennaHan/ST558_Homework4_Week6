@@ -133,26 +133,383 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="task-1-conceptual-questions" class="level2">
+<h2 class="anchored" data-anchor-id="task-1-conceptual-questions">Task 1: Conceptual Questions</h2>
+<ol type="1">
+<li><p>What is the purpose of the lapply() function? What is the equivalent purrr function?<br>
+&gt; lappy() is used to apply function to lists and obtain list objects. purr::map() is equivalent to lapply().</p></li>
+<li><p>Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = “kendall”) on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = “kendall” when calling lapply())<br>
+&gt;lapply(my_list, function(x) cor(x, method = “kendall”))</p></li>
+<li><p>What are two advantages of using purrr functions instead of the BaseR apply family?<br>
+&gt; Main advantage is more consistency and some helper functions. purr has much greater consistency between the functions. The helpers allow us to write compact code for common special cases. Moreover, purr provides more functions that fills in some handy map variants that are absent from base R.</p></li>
+<li><p>What is a side-effect function?<br>
+&gt; A side-effect function is a function that performs an action that affects the state of the system or interacts with the outside world in addition to (or instead of) returning a value, such as print(), write_csv(). For example, modifying a global variable, writing to a file, updating a database, printing to a console, or changing the user interface.</p></li>
+<li><p>Why can you name a variable sd in a function and not cause any issues with the sd function?<br>
+&gt; When we call a function, it creates temporary function environments, thus it will not overwrite sd function.</p></li>
+</ol>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
+<section id="task-2---writing-r-functions" class="level2">
+<h2 class="anchored" data-anchor-id="task-2---writing-r-functions">Task 2 - Writing R Functions</h2>
+<p><strong>1. Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.</strong><br>
+- If a value is missing for the vector of responses (i.e.&nbsp;an NA is present), allow for additional arguments to the mean() function (elipses) that removes the NA values in the computation.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>getRMSE <span class="ot">&lt;-</span> <span class="cf">function</span>(resp, pred, ...) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the residuals</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  residuals <span class="ot">&lt;-</span> resp <span class="sc">-</span> pred</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the Mean Squared Error (MSE)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  mse <span class="ot">&lt;-</span> <span class="fu">mean</span>(residuals<span class="sc">^</span><span class="dv">2</span>, ...)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the Root Mean Square Error (RMSE)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(mse)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(rmse)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>You can add options to executable code like this</p>
+<p><strong>2. Run the following code to create some response values and predictions.</strong><br>
+- Test your RMSE function using this data.</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">+</span> <span class="dv">10</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">lm</span>(resp <span class="sc">~</span> x), <span class="fu">data.frame</span>(x))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># test function</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">getRMSE</span>(resp, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<pre><code>[1] 0.9581677</code></pre>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+<ul>
+<li>Repeat after replacing two of the response values with missing values (NA_real_).<br>
+</li>
+<li>Test your RMSE function with and without specifying the behavior to deal with missing values.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># replace two of the response values with missing values (40th &amp; 70th)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>resp_with_na <span class="ot">&lt;-</span> resp</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>resp_with_na[<span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">70</span>)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function with specifying na.rm = TRUE</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">getRMSE</span>(resp_with_na, pred, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9624592</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function without specifying na.rm = TRUE</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getRMSE</span>(resp_with_na, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+<p><strong>3. Write a function called getMAE() that follows the specifications of the getRMSE() function.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>getMAE <span class="ot">&lt;-</span> <span class="cf">function</span>(resp, pred, ...) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the residuals</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  residuals <span class="ot">&lt;-</span> resp <span class="sc">-</span> pred</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the Mean Absolute Error (MAE)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  mae <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(residuals), ...)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(mae)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>4. Test the MAE function using the generated data.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test function</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMAE</span>(resp, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8155776</code></pre>
+</div>
+</div>
+<ul>
+<li>Repeat after replacing two of the response values with missing values (NA_real_).<br>
+</li>
+<li>Test your MAE function with and without specifying the behavior to deal with missing values.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function with specifying na.rm = TRUE</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMAE</span>(resp_with_na, pred, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8205076</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function without specifying na.rm = TRUE</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMAE</span>(resp_with_na, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+<p><strong>5. Create a wrapper function that can be used to get either or both metrics returned with a single function call. Do not rewrite your above two functions, call them inside the wrapper function (we would call the getRMSE() and getMAE() functions helper functions). When returning your values, give them appropriate names.</strong><br>
+- The function should check that two numeric (atomic) vectors have been passed (consider is.vector(), is.atomic(), and is.numeric()). If not, a message should print and the function should exit.<br>
+- The function should return both metrics by default and include names. The behavior should be able to be changed using a character string of metrics to find.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>getMetrics <span class="ot">&lt;-</span> <span class="cf">function</span>(resp, pred, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"RMSE"</span>, <span class="st">"MAE"</span>), ...) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Ensure the inputs are atomic numeric vectors of the same length</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(<span class="fu">is.vector</span>(resp) <span class="sc">&amp;&amp;</span> <span class="fu">is.atomic</span>(resp) <span class="sc">&amp;&amp;</span> <span class="fu">is.numeric</span>(resp) <span class="sc">&amp;&amp;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">is.vector</span>(pred) <span class="sc">&amp;&amp;</span> <span class="fu">is.atomic</span>(pred) <span class="sc">&amp;&amp;</span> <span class="fu">is.numeric</span>(pred))) {</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Both responses and predictions must be atomic numeric vectors."</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">"RMSE"</span> <span class="sc">%in%</span> metrics) {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    results<span class="sc">$</span>RMSE <span class="ot">&lt;-</span> <span class="fu">getRMSE</span>(resp, pred, ...)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">"MAE"</span> <span class="sc">%in%</span> metrics) {</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    results<span class="sc">$</span>MAE <span class="ot">&lt;-</span> <span class="fu">getMAE</span>(resp, pred, ...)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(results)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>6. Test the new function using the generated data.</strong><br>
+- Call it once asking for each metric individually and once specifying both metrics.<br>
+</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ask for RMSE only</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(resp, pred, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"RMSE"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$RMSE
+[1] 0.9581677</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ask for MAE only</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(resp, pred, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"MAE"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$MAE
+[1] 0.8155776</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ask for both RMSE and MAE</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(resp, pred, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"RMSE"</span>, <span class="st">"MAE"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$RMSE
+[1] 0.9581677
+
+$MAE
+[1] 0.8155776</code></pre>
+</div>
+</div>
+<ul>
+<li>Repeat with replacing two of the response values with missing values (NA_real_).<br>
+</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function with specifying na.rm = TRUE</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(resp_with_na, pred, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$RMSE
+[1] 0.9624592
+
+$MAE
+[1] 0.8205076</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function without specifying na.rm = TRUE</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(resp_with_na, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$RMSE
+[1] NA
+
+$MAE
+[1] NA</code></pre>
+</div>
+</div>
+<ul>
+<li>Finally, test the function by passing it incorrect data (i.e.&nbsp;a data frame or something else instead of vectors).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>incorrect_resp <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(resp)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function with incorrect data</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(incorrect_resp, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As expected, the output shows: “Error in as.data.frame(resp) : object ‘resp’ not found”.</p>
+</section>
+<section id="task-3---querying-an-api-and-a-tidy-style-function" class="level2">
+<h2 class="anchored" data-anchor-id="task-3---querying-an-api-and-a-tidy-style-function">Task 3 - Querying an API and a Tidy-Style Function</h2>
+<p><strong>1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'jsonlite' was built under R version 4.2.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get information about businesses</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>business_info <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="st">"https://newsapi.org/v2/top-headlines?country=us&amp;category=business&amp;apiKey=d0c08c5bbcd3476aa22de1b997561871"</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(business_info, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 10
+ $ url        : chr "https://newsapi.org/v2/top-headlines?country=us&amp;category=business&amp;apiKey=d0c08c5bbcd3476aa22de1b997561871"
+ $ status_code: int 200
+ $ headers    :List of 14
+  ..- attr(*, "class")= chr [1:2] "insensitive" "list"
+ $ all_headers:List of 1
+ $ cookies    :'data.frame':    0 obs. of  7 variables:
+ $ content    : raw [1:16580] 7b 22 73 74 ...
+ $ date       : POSIXct[1:1], format: "2024-06-24 04:50:36"
+ $ times      : Named num [1:6] 0 0.00581 0.01939 0.04385 0.0876 ...
+  ..- attr(*, "names")= chr [1:6] "redirect" "namelookup" "connect" "pretransfer" ...
+ $ request    :List of 7
+  ..- attr(*, "class")= chr "request"
+ $ handle     :Class 'curl_handle' &lt;externalptr&gt; 
+ - attr(*, "class")= chr "response"</code></pre>
+</div>
+</div>
+<p><strong>2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'readr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter()  masks stats::filter()
+✖ purrr::flatten() masks jsonlite::flatten()
+✖ dplyr::lag()     masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>parsed_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(business_info<span class="sc">$</span>content))</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(parsed_data) <span class="co">#check what's in content</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ status      : chr "ok"
+ $ totalResults: int 61
+ $ articles    :'data.frame':   20 obs. of  8 variables:
+  ..$ source     :'data.frame': 20 obs. of  2 variables:
+  .. ..$ id  : chr [1:20] NA NA NA NA ...
+  .. ..$ name: chr [1:20] "Gothamist" "Gothamist" "Page Six" "[Removed]" ...
+  ..$ author     : chr [1:20] "https://gothamist.com/staff/karen-yi-wnyc" "https://gothamist.com/staff/david-giambusso" "BreAnna Bell" NA ...
+  ..$ title      : chr [1:20] "NJ Transit pledges to hold Amtrak's 'feet to the fire' after commuting meltdowns - Gothamist" "NYC utility workers could strike amid heat wave if union, Con Ed don't reach a deal - Gothamist" "Elon Musk welcomed third child with Shivon Zilis earlier this year: report - Page Six" "[Removed]" ...
+  ..$ description: chr [1:20] "The two transit agencies still don't agree on what's causing all of their problems but they've pledged to work "| __truncated__ "The contract for roughly 8,000 workers expires at midnight on Saturday." "Musk previously welcomed twins Strider and Azure with Zilis in November 2021, one month before he had a daughte"| __truncated__ "[Removed]" ...
+  ..$ url        : chr [1:20] "https://gothamist.com/news/nj-transit-pledges-to-hold-amtraks-feet-to-the-fire-after-commuting-meltdowns" "https://gothamist.com/news/nyc-utility-workers-could-strike-amid-heat-wave-if-union-con-ed-dont-reach-a-deal" "https://pagesix.com/2024/06/22/parents/elon-musk-secretly-welcomed-third-child-with-shivon-zilis-earlier-this-year-report/" "https://removed.com" ...
+  ..$ urlToImage : chr [1:20] "https://api-prod.gothamist.com/images/345769/fill-1200x650|format-webp|webpquality-85/" "https://api-prod.gothamist.com/images/345776/fill-1200x650|format-webp|webpquality-85/" "https://pagesix.com/wp-content/uploads/sites/3/2024/06/84296116.jpg?quality=75&amp;strip=all&amp;w=1024" NA ...
+  ..$ publishedAt: chr [1:20] "2024-06-23T01:56:00Z" "2024-06-23T01:56:00Z" "2024-06-23T01:41:15Z" "1970-01-01T00:00:00Z" ...
+  ..$ content    : chr [1:20] "The head of NJ Transit said hes holding Amtraks feet to the fire to ensure the weeks brutal train delays don't "| __truncated__ "As New Yorkers swelter through an extended heat wave this week, roughly 8,000 utility workers are poised to go "| __truncated__ "Congratulations may be in order for Elon Musk. \r\nAccording to Bloomberg, the billionaire allegedly welcomed h"| __truncated__ "[Removed]" ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>article_info <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(parsed_data<span class="sc">$</span>articles)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(article_info<span class="sc">$</span>source) <span class="co">#check what's in the first column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   20 obs. of  2 variables:
+ $ id  : chr  NA NA NA NA ...
+ $ name: chr  "Gothamist" "Gothamist" "Page Six" "[Removed]" ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change the first data frame column to two list column</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>article_info <span class="ot">&lt;-</span> article_info <span class="sc">|&gt;</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>id,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">name=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>name) <span class="sc">|&gt;</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, <span class="fu">everything</span>(), <span class="sc">-</span>source)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>article_info</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 9
+   id        name  author title description url   urlToImage publishedAt content
+   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;  
+ 1 &lt;NA&gt;      Goth… https… "NJ … The two tr… http… https://a… 2024-06-23… "The h…
+ 2 &lt;NA&gt;      Goth… https… "NYC… The contra… http… https://a… 2024-06-23… "As Ne…
+ 3 &lt;NA&gt;      Page… BreAn… "Elo… Musk previ… http… https://p… 2024-06-23… "Congr…
+ 4 &lt;NA&gt;      [Rem… &lt;NA&gt;   "[Re… [Removed]   http… &lt;NA&gt;       1970-01-01… "[Remo…
+ 5 &lt;NA&gt;      WKRC… WKRC   "567… About 600,… http… https://l… 2024-06-23… "UNDAT…
+ 6 &lt;NA&gt;      Fox … Chris… "Oli… Darden Res… http… https://a… 2024-06-22… "Sit-d…
+ 7 &lt;NA&gt;      KRON4 Hamza… "Air… (KRON) — T… http… https://w… 2024-06-22… "(KRON…
+ 8 &lt;NA&gt;      Motl… Johnn… "3 R… Nvidia's a… http… https://g… 2024-06-22… "Nvidi…
+ 9 &lt;NA&gt;      PBS   Ali R… "The… The rise o… http… https://d… 2024-06-22… "The r…
+10 &lt;NA&gt;      Huff… Marco… "Fle… Footage of… http… https://i… 2024-06-22… "Tesla…
+11 &lt;NA&gt;      Motl… Antho… "Cat… Software s… http… https://g… 2024-06-22… "Softw…
+12 bloomberg Bloo… Vince… "Fed… The Federa… http… https://a… 2024-06-22… "The F…
+13 &lt;NA&gt;      Blee… Lawre… "CDK… BleepingCo… http… https://w… 2024-06-22… "Today…
+14 the-wash… The … David… "Fre… Markets we… http… https://w… 2024-06-22… "Frenc…
+15 fortune   Fort… Jason… "San… There's a … http… https://f… 2024-06-22… "A thr…
+16 &lt;NA&gt;      The … Daily… "JPM… US regulat… http… https://d… 2024-06-22… "US re…
+17 usa-today USA … Eduar… "Wha… The Depart… http… https://w… 2024-06-22… "As mu…
+18 bloomberg Bloo… Finba… "Cre… Global cor… http… https://a… 2024-06-22… "Globa…
+19 &lt;NA&gt;      TheS… Rob L… "Ana… This is wh… http… https://w… 2024-06-22… "The p…
+20 &lt;NA&gt;      New … Brook… "Hun… The produc… http… https://n… 2024-06-22… "What …</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the function to query the news API</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>query_news_api <span class="ot">&lt;-</span> <span class="cf">function</span>(query, from_date, api_key) {</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Construct the URL for the API request</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://newsapi.org/v2/everything"</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> query,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> from_date,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">apiKey =</span> api_key)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make the GET request</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  response <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> params)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check if the request was successful</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">http_status</span>(response)<span class="sc">$</span>category <span class="sc">!=</span> <span class="st">"Success"</span>) {</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Failed to fetch data from the API."</span>)</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Parse the JSON content</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>  parsed_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  article_info <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(parsed_data<span class="sc">$</span>articles)</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># change the first data frame column to two list column</span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  article_info <span class="ot">&lt;-</span> article_info <span class="sc">|&gt;</span></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">id=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>id,</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">name=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>name) <span class="sc">|&gt;</span></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(id, name, <span class="fu">everything</span>(), <span class="sc">-</span>source)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(article_info)</span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the function twice</span></span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="st">"d0c08c5bbcd3476aa22de1b997561871"</span></span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1: Query for the topic "Business" from the past 30 days</span></span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>result_business <span class="ot">&lt;-</span> <span class="fu">query_news_api</span>(<span class="at">query =</span> <span class="st">"Business"</span>, <span class="at">from_date =</span> <span class="fu">Sys.Date</span>() <span class="sc">-</span> <span class="dv">30</span>, <span class="at">api_key =</span> api_key)</span>
+<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_business)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 100 × 9
+   id        name  author title description url   urlToImage publishedAt content
+   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;  
+ 1 wired     Wired Justi… How … "In this c… http… https://m… 2024-06-16… "So th…
+ 2 &lt;NA&gt;      Yaho… Will … Jabr… "Jabra is … http… &lt;NA&gt;       2024-06-12… "If yo…
+ 3 wired     Wired Kate … AI I… "Generativ… http… https://m… 2024-06-04… "Yet i…
+ 4 &lt;NA&gt;      BBC … &lt;NA&gt;   More… "More than… http… https://i… 2024-05-27… "Dozen…
+ 5 &lt;NA&gt;      BBC … &lt;NA&gt;   Sarw… "The Scott… http… https://i… 2024-05-26… "Anas …
+ 6 &lt;NA&gt;      Gizm… Maxwe… May … "McDonald’… http… https://i… 2024-06-17… "McDon…
+ 7 &lt;NA&gt;      Gizm… Gordo… The … "House of … http… https://i… 2024-06-07… "House…
+ 8 business… Busi… Lara … Busi… "Business … http… https://i… 2024-06-18… "From …
+ 9 business… Busi… Matth… I to… "Lauri Uni… http… https://i… 2024-06-12… "Lauri…
+10 business… Busi… Isabe… I pu… "Business … http… https://i… 2024-06-13… "Harri…
+# ℹ 90 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2:Query for the topic "Tesla" from 2024-04-30</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>result_tesla <span class="ot">&lt;-</span> <span class="fu">query_news_api</span>(<span class="at">query =</span> <span class="st">"Tesla"</span>, <span class="at">from_date =</span> <span class="dv">2024-04-30</span>, <span class="at">api_key =</span> api_key)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_tesla)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 100 × 9
+   id        name  author title description url   urlToImage publishedAt content
+   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;  
+ 1 wired     Wired Aaria… Tesl… "Elon Musk… http… https://m… 2024-06-13… "Under…
+ 2 &lt;NA&gt;      [Rem… &lt;NA&gt;   [Rem… "[Removed]" http… &lt;NA&gt;       1970-01-01… "[Remo…
+ 3 &lt;NA&gt;      Yaho… Sarah… Tesl… "Tesla is … http… &lt;NA&gt;       2024-05-31… "If yo…
+ 4 wired     Wired Boone… Thin… "Plus: Wil… http… https://m… 2024-06-08… "Each …
+ 5 &lt;NA&gt;      Gizm… Colli… New … "The Tesla… http… https://i… 2024-05-28… "The T…
+ 6 business… Busi… Ana A… Tesl… "Tesla is … http… https://i… 2024-06-06… "Tesla…
+ 7 ars-tech… Ars … Jonat… Nvid… "The Tesla… http… https://c… 2024-06-04… "Enlar…
+ 8 the-verge The … Andre… The … "The 2024 … http… https://c… 2024-05-30… "ByAnd…
+ 9 &lt;NA&gt;      BBC … &lt;NA&gt;   Musk… "He previo… http… https://i… 2024-05-24… "Peter…
+10 &lt;NA&gt;      [Rem… &lt;NA&gt;   [Rem… "[Removed]" http… &lt;NA&gt;       1970-01-01… "[Remo…
+# ℹ 90 more rows</code></pre>
+</div>
+</div>
 
 
 </section>
