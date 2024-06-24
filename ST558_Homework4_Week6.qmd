@@ -40,6 +40,7 @@ getRMSE <- function(resp, pred, ...) {
 
 **2. Run the following code to create some response values and predictions.**\
 - Test your RMSE function using this data.
+
 ```{r}
 set.seed(10)
 n <- 100
@@ -51,8 +52,8 @@ pred <- predict(lm(resp ~ x), data.frame(x))
 getRMSE(resp, pred)
 ```
 
-- Repeat after replacing two of the response values with missing values (NA_real\_).\
-- Test your RMSE function with and without specifying the behavior to deal with missing values.
+-   Repeat after replacing two of the response values with missing values (NA_real\_).\
+-   Test your RMSE function with and without specifying the behavior to deal with missing values.
 
 ```{r}
 # replace two of the response values with missing values (40th & 70th)
@@ -85,8 +86,8 @@ getMAE <- function(resp, pred, ...) {
 getMAE(resp, pred)
 ```
 
-- Repeat after replacing two of the response values with missing values (NA_real\_).\
-- Test your MAE function with and without specifying the behavior to deal with missing values.
+-   Repeat after replacing two of the response values with missing values (NA_real\_).\
+-   Test your MAE function with and without specifying the behavior to deal with missing values.
 
 ```{r}
 # test the function with specifying na.rm = TRUE
@@ -144,17 +145,20 @@ getMetrics(resp_with_na, pred, na.rm = TRUE)
 getMetrics(resp_with_na, pred)
 ```
 
--   Finally, test the function by passing it incorrect data (i.e. a data frame or something else instead of vectors). 
+-   Finally, test the function by passing it incorrect data (i.e. a data frame or something else instead of vectors).
 
 ```{r,eval=FALSE}
 incorrect_resp <- as.data.frame(resp)
 # test the function with incorrect data
 getMetrics(incorrect_resp, pred)
 ```
-As expected, the output shows: "Error in as.data.frame(resp) : object 'resp' not found". 
+
+As expected, the output shows: "Error in as.data.frame(resp) : object 'resp' not found".
 
 ## Task 3 - Querying an API and a Tidy-Style Function
+
 **1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.**
+
 ```{r}
 library(httr)
 library(jsonlite)
@@ -164,6 +168,7 @@ str(business_info, max.level = 1)
 ```
 
 **2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!**
+
 ```{r}
 library(tidyverse)
 parsed_data <- fromJSON(rawToChar(business_info$content))
@@ -180,6 +185,7 @@ article_info
 ```
 
 **3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key. Then, use the function twice.**
+
 ```{r}
 # Define the function to query the news API
 query_news_api <- function(query, from_date, api_key) {
@@ -218,9 +224,7 @@ api_key <- "d0c08c5bbcd3476aa22de1b997561871"
 result_business <- query_news_api(query = "Business", from_date = Sys.Date() - 30, api_key = api_key)
 print(result_business)
 
-# test 2:Query for the topic "Tesla" from 2024-04-30
-result_tesla <- query_news_api(query = "Tesla", from_date = 2024-04-30, api_key = api_key)
+# test 2:Query for the topic "Tesla" from 2024-05-30
+result_tesla <- query_news_api(query = "Tesla", from_date = 2024-05-30, api_key = api_key)
 print(result_tesla)
 ```
-
-
