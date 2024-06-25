@@ -147,13 +147,11 @@ getMetrics(resp_with_na, pred)
 
 -   Finally, test the function by passing it incorrect data (i.e. a data frame or something else instead of vectors).
 
-```{r,eval=FALSE}
+```{r,error=TRUE}
 incorrect_resp <- as.data.frame(resp)
 # test the function with incorrect data
 getMetrics(incorrect_resp, pred)
 ```
-
-As expected, the output shows: "Error in as.data.frame(resp) : object 'resp' not found".
 
 ## Task 3 - Querying an API and a Tidy-Style Function
 

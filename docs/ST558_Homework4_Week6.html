@@ -315,32 +315,34 @@ $MAE
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>incorrect_resp <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(resp)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function with incorrect data</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">getMetrics</span>(incorrect_resp, pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in getMetrics(incorrect_resp, pred): Both responses and predictions must be atomic numeric vectors.</code></pre>
 </div>
-<p>As expected, the output shows: “Error in as.data.frame(resp) : object ‘resp’ not found”.</p>
+</div>
 </section>
 <section id="task-3---querying-an-api-and-a-tidy-style-function" class="level2">
 <h2 class="anchored" data-anchor-id="task-3---querying-an-api-and-a-tidy-style-function">Task 3 - Querying an API and a Tidy-Style Function</h2>
 <p><strong>1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account.</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'jsonlite' was built under R version 4.2.3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get information about businesses</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>business_info <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="st">"https://newsapi.org/v2/top-headlines?country=us&amp;category=business&amp;apiKey=d0c08c5bbcd3476aa22de1b997561871"</span>)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(business_info, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get information about businesses</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>business_info <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="st">"https://newsapi.org/v2/top-headlines?country=us&amp;category=business&amp;apiKey=d0c08c5bbcd3476aa22de1b997561871"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(business_info, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 10
  $ url        : chr "https://newsapi.org/v2/top-headlines?country=us&amp;category=business&amp;apiKey=d0c08c5bbcd3476aa22de1b997561871"
  $ status_code: int 200
- $ headers    :List of 12
+ $ headers    :List of 14
   ..- attr(*, "class")= chr [1:2] "insensitive" "list"
  $ all_headers:List of 1
  $ cookies    :'data.frame':    0 obs. of  7 variables:
- $ content    : raw [1:15410] 7b 22 73 74 ...
- $ date       : POSIXct[1:1], format: "2024-06-24 23:45:33"
- $ times      : Named num [1:6] 0 0.0875 0.1014 0.1239 0.2321 ...
+ $ content    : raw [1:13505] 7b 22 73 74 ...
+ $ date       : POSIXct[1:1], format: "2024-06-25 14:38:50"
+ $ times      : Named num [1:6] 0 0.00711 0.02155 0.04242 0.08542 ...
   ..- attr(*, "names")= chr [1:6] "redirect" "namelookup" "connect" "pretransfer" ...
  $ request    :List of 7
   ..- attr(*, "class")= chr "request"
@@ -350,7 +352,7 @@ $MAE
 </div>
 <p><strong>2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'ggplot2' was built under R version 4.2.3</code></pre>
 </div>
@@ -376,102 +378,102 @@ $MAE
 ✖ dplyr::lag()     masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>parsed_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(business_info<span class="sc">$</span>content))</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(parsed_data) <span class="co">#check what's in content</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>parsed_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(business_info<span class="sc">$</span>content))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(parsed_data) <span class="co">#check what's in content</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
  $ status      : chr "ok"
- $ totalResults: int 70
+ $ totalResults: int 68
  $ articles    :'data.frame':   20 obs. of  8 variables:
   ..$ source     :'data.frame': 20 obs. of  2 variables:
-  .. ..$ id  : chr [1:20] NA "bloomberg" NA NA ...
-  .. ..$ name: chr [1:20] "CNBC" "Bloomberg" "New York Post" "Investing.com" ...
-  ..$ author     : chr [1:20] "Yun Li" "Catherine Bosley, Matthew Burgess" "Isabel Keane" "Reuters" ...
-  ..$ title      : chr [1:20] "Stock futures are flat as the market set to enter last week of June near a record: Live updates - CNBC" "Stock Market Today: Dow, S&amp;P Live Updates for June 24 - Bloomberg" "Elon Musk's 12 kids and counting -- What to know about the Tesla billionaire's big brood - New York Post " "UPS announces sale of Coyote Logistics unit to RXO for $1 billion By Reuters - Investing.com" ...
-  ..$ description: chr [1:20] "The S&amp;P 500 has advanced almost 15% this year after notching 31 record closes." "Asian shares edged lower, kicking off a week that includes measures of inflation that will help guide bets on t"| __truncated__ "Elon Musk, worth $207 billion, has fathered six kids in the past five years — including three with Neuralink ex"| __truncated__ "UPS announces sale of Coyote Logistics unit to RXO for $1 billion" ...
-  ..$ url        : chr [1:20] "https://www.cnbc.com/2024/06/23/stock-market-today-live-updates.html" "https://www.bloomberg.com/news/articles/2024-06-23/asian-stocks-set-to-slip-into-cpi-election-week-markets-wrap" "https://nypost.com/2024/06/23/us-news/elon-musks-12-kids-and-counting-what-to-know-about-the-tesla-billionaires-big-brood/" "https://www.investing.com/news/stock-market-news/ups-announces-sale-of-coyote-logistics-unit-to-rxo-for-1-billion-3492930" ...
-  ..$ urlToImage : chr [1:20] "https://image.cnbcfm.com/api/v1/image/107099147-NYSE-Trading-Floor-OB-Photo-220804-CC-PRESS-4.jpg?v=1708556665&amp;w=1920&amp;h=1080" "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/i.d.iFQCLa5k/v1/1200x817.jpg" "https://nypost.com/wp-content/uploads/sites/2/2024/06/elon-musks-12-kids-counting-84341013.jpg?quality=75&amp;strip=all&amp;w=1024" "https://i-invdn-com.investing.com/news/LYNXMPEE13090_L.jpg" ...
-  ..$ publishedAt: chr [1:20] "2024-06-23T22:57:00Z" "2024-06-23T22:38:30Z" "2024-06-23T22:21:00Z" "2024-06-23T22:01:04Z" ...
-  ..$ content    : chr [1:20] "Stock futures were flat in overnight trading Sunday as the market is set to enter the last week of June and 202"| __truncated__ "Asian shares edged lower, kicking off a week that includes measures of inflation that will help guide bets on t"| __truncated__ "Tesla CEO Elon Musk has confirmed that he welcomed his third child with Neuralink director Shivon Zilis earlier"| __truncated__ "(Reuters) -United Parcel Service, the world's biggest package delivery firm, will sell its Coyote Logistics bus"| __truncated__ ...</code></pre>
+  .. ..$ id  : chr [1:20] "reuters" "reuters" NA NA ...
+  .. ..$ name: chr [1:20] "Reuters" "Reuters" "Yahoo Entertainment" "Yahoo Entertainment" ...
+  ..$ author     : chr [1:20] "Reuters" "Reuters" NA "Gerry Smith" ...
+  ..$ title      : chr [1:20] "Nvidia, other chips drag Nasdaq; markets eye inflation data - Reuters" "Fast fashion retailer Shein filed for London listing in early June - Reuters" "Analyst Says NVIDIA Corp (NASDAQ:NVDA) is the “Only Game In Town” for AI GPUs - Yahoo Finance" "Alnylam Soars After Drug Meets Goal in Heart Disease Trial - Yahoo Finance" ...
+  ..$ description: chr [1:20] NA NA NA "(Bloomberg) -- Alnylam Pharmaceuticals Inc. shares soared after its drug succeeded in treating a progressive an"| __truncated__ ...
+  ..$ url        : chr [1:20] "https://www.reuters.com/markets/us/futures-mixed-inflation-data-presidential-debate-focus-2024-06-24/" "https://www.reuters.com/business/retail-consumer/fast-fashion-retailer-shein-filed-london-listing-early-june-so"| __truncated__ "https://finance.yahoo.com/news/analyst-says-nvidia-corp-nasdaq-135257269.html" "https://finance.yahoo.com/news/alnylam-shares-soar-drug-meets-113947027.html" ...
+  ..$ urlToImage : chr [1:20] NA NA NA "https://s.yimg.com/ny/api/res/1.2/BA2GgpauAdx.Z5h6GOrnsw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA-/https://med"| __truncated__ ...
+  ..$ publishedAt: chr [1:20] "2024-06-24T14:19:00Z" "2024-06-24T13:54:00Z" "2024-06-24T13:52:57Z" "2024-06-24T13:46:08Z" ...
+  ..$ content    : chr [1:20] NA NA "If you click 'Accept all', we and our partners, including 237 who are part of the IAB Transparency &amp;amp; Consen"| __truncated__ "(Bloomberg) -- Alnylam Pharmaceuticals Inc. shares soared after its drug succeeded in treating a progressive an"| __truncated__ ...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>article_info <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(parsed_data<span class="sc">$</span>articles)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(article_info<span class="sc">$</span>source) <span class="co">#check what's in the first column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>article_info <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(parsed_data<span class="sc">$</span>articles)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(article_info<span class="sc">$</span>source) <span class="co">#check what's in the first column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   20 obs. of  2 variables:
- $ id  : chr  NA "bloomberg" NA NA ...
- $ name: chr  "CNBC" "Bloomberg" "New York Post" "Investing.com" ...</code></pre>
+ $ id  : chr  "reuters" "reuters" NA NA ...
+ $ name: chr  "Reuters" "Reuters" "Yahoo Entertainment" "Yahoo Entertainment" ...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change the first data frame column to two list column</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>article_info <span class="ot">&lt;-</span> article_info <span class="sc">|&gt;</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>id,</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">name=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>name) <span class="sc">|&gt;</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, <span class="fu">everything</span>(), <span class="sc">-</span>source)</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>article_info</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change the first data frame column to two list column</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>article_info <span class="ot">&lt;-</span> article_info <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>id,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">name=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>name) <span class="sc">|&gt;</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, <span class="fu">everything</span>(), <span class="sc">-</span>source)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>article_info</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 9
    id        name  author title description url   urlToImage publishedAt content
    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;  
- 1 &lt;NA&gt;      CNBC  Yun Li "Sto… "The S&amp;P 5… http… https://i… 2024-06-23… "Stock…
- 2 bloomberg Bloo… Cathe… "Sto… "Asian sha… http… https://a… 2024-06-23… "Asian…
- 3 &lt;NA&gt;      New … Isabe… "Elo… "Elon Musk… http… https://n… 2024-06-23… "Tesla…
- 4 &lt;NA&gt;      Inve… Reute… "UPS… "UPS annou… http… https://i… 2024-06-23… "(Reut…
- 5 &lt;NA&gt;      Goth… https… "NYC… "The contr… http… https://a… 2024-06-23… "Updat…
- 6 &lt;NA&gt;      KABC… &lt;NA&gt;   "Pas… "A Souther… http… https://c… 2024-06-23… "PASAD…
- 7 &lt;NA&gt;      New … David… "NYC… "“When you… http… https://n… 2024-06-23… "A rit…
- 8 &lt;NA&gt;      KOIN… Anna … "Hum… "The drug … http… https://w… 2024-06-23… "(News…
- 9 fortune   Fort… Jason… "Sto… "\"The ado… http… https://f… 2024-06-23… "Funds…
-10 &lt;NA&gt;      KOMO… Lee S… "Use… "Many peop… http… https://k… 2024-06-23… "SEATT…
-11 &lt;NA&gt;      KABC… &lt;NA&gt;   "Toy… "Toyota is… http… https://c… 2024-06-23… "Toyot…
-12 &lt;NA&gt;      WOLF… &lt;NA&gt;   "Who…  &lt;NA&gt;       http… &lt;NA&gt;       2024-06-23… "The U…
-13 &lt;NA&gt;      KGO-… ABC7 … "McD… "\"This is… http… https://c… 2024-06-23… "SAN F…
-14 &lt;NA&gt;      Ambc… Adewa… "Cry… "Here is h… http… https://a… 2024-06-23… "&lt;ul&gt;&lt;…
-15 &lt;NA&gt;      Fox … Eric … "Tes… "Tesla and… http… https://a… 2024-06-23… "Elect…
-16 &lt;NA&gt;      Bitc… Jamie… "Mar… "As the U.… http… https://s… 2024-06-23…  &lt;NA&gt;  
-17 &lt;NA&gt;      New … Reute… "CDK… "Retail te… http… https://n… 2024-06-23… "Retai…
-18 &lt;NA&gt;      Coin… Coint… "Bit…  &lt;NA&gt;       http… &lt;NA&gt;       2024-06-23…  &lt;NA&gt;  
-19 the-wash… The … Sarah… "Hea… "Researche… http… https://w… 2024-06-23… "No on…
-20 &lt;NA&gt;      Ambc… Yash … "Sol… "Solana tr… http… https://a… 2024-06-23… "&lt;ul&gt;&lt;…</code></pre>
+ 1 reuters   Reut… Reute… Nvid… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+ 2 reuters   Reut… Reute… Fast… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+ 3 &lt;NA&gt;      Yaho… &lt;NA&gt;   Anal… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24… "If yo…
+ 4 &lt;NA&gt;      Yaho… Gerry… Alny… (Bloomberg… http… https://s… 2024-06-24… "(Bloo…
+ 5 &lt;NA&gt;      Barr… Barro… Nvid… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+ 6 &lt;NA&gt;      Ambc… Samue… Bitc… Metaplanet… http… https://a… 2024-06-24… "&lt;ul&gt;&lt;…
+ 7 associat… Asso… FATIM… Yell… The Biden … http… https://d… 2024-06-24… "WASHI…
+ 8 abc-news  ABC … WYATT… Car … Car dealer… http… https://i… 2024-06-24… "NEW Y…
+ 9 &lt;NA&gt;      Decr… Taran… Near… In stark c… http… https://c… 2024-06-24… "Bears…
+10 &lt;NA&gt;      Yaho… Brett… Stoc… Stocks are… http… https://s… 2024-06-24… "US st…
+11 google-n… Goog… NBC P… Pass… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+12 google-n… Goog… CNBC   Mond… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+13 google-n… Goog… Inves… 5 Th… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+14 google-n… Goog… Benzi… What… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+15 google-n… Goog… Motor… Duma… &lt;NA&gt;        http… &lt;NA&gt;       2024-06-24…  &lt;NA&gt;  
+16 &lt;NA&gt;      AL.c… Leada… Big … Your next … http… https://w… 2024-06-24… "Big c…
+17 techradar Tech… Alex … Oops… Can you sp… http… https://c… 2024-06-24… "Has A…
+18 &lt;NA&gt;      Hind… Ashim… Elon… Elon Musk … http… https://w… 2024-06-24… "Elon …
+19 bloomberg Bloo… Hema … Jain… Bobby Jain… http… https://a… 2024-06-24… "Bobby…
+20 &lt;NA&gt;      Glob… ANI P… ANI … Conference… http… https://m… 2024-06-24… "Confe…</code></pre>
 </div>
 </div>
 <p><strong>3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key. Then, use the function twice.</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the function to query the news API</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>query_news_api <span class="ot">&lt;-</span> <span class="cf">function</span>(query, from_date, api_key) {</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Construct the URL for the API request</span></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://newsapi.org/v2/everything"</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> query,</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> from_date,</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">apiKey =</span> api_key)</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make the GET request</span></span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  response <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> params)</span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check if the request was successful</span></span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">http_status</span>(response)<span class="sc">$</span>category <span class="sc">!=</span> <span class="st">"Success"</span>) {</span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Failed to fetch data from the API."</span>)</span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Parse the JSON content</span></span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>  parsed_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  article_info <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(parsed_data<span class="sc">$</span>articles)</span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># change the first data frame column to two list column</span></span>
-<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  article_info <span class="ot">&lt;-</span> article_info <span class="sc">|&gt;</span></span>
-<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">id=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>id,</span>
-<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">name=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>name) <span class="sc">|&gt;</span></span>
-<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(id, name, <span class="fu">everything</span>(), <span class="sc">-</span>source)</span>
-<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(article_info)</span>
-<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the function twice</span></span>
-<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="st">"d0c08c5bbcd3476aa22de1b997561871"</span></span>
-<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1: Query for the topic "Business" from the past 30 days</span></span>
-<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>result_business <span class="ot">&lt;-</span> <span class="fu">query_news_api</span>(<span class="at">query =</span> <span class="st">"Business"</span>, <span class="at">from_date =</span> <span class="fu">Sys.Date</span>() <span class="sc">-</span> <span class="dv">30</span>, <span class="at">api_key =</span> api_key)</span>
-<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_business)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the function to query the news API</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>query_news_api <span class="ot">&lt;-</span> <span class="cf">function</span>(query, from_date, api_key) {</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Construct the URL for the API request</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://newsapi.org/v2/everything"</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> query,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> from_date,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">apiKey =</span> api_key)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make the GET request</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  response <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> params)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check if the request was successful</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">http_status</span>(response)<span class="sc">$</span>category <span class="sc">!=</span> <span class="st">"Success"</span>) {</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Failed to fetch data from the API."</span>)</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Parse the JSON content</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  parsed_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>  article_info <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(parsed_data<span class="sc">$</span>articles)</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># change the first data frame column to two list column</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  article_info <span class="ot">&lt;-</span> article_info <span class="sc">|&gt;</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">id=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>id,</span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">name=</span>article_info<span class="sc">$</span>source<span class="sc">$</span>name) <span class="sc">|&gt;</span></span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(id, name, <span class="fu">everything</span>(), <span class="sc">-</span>source)</span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(article_info)</span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the function twice</span></span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="st">"d0c08c5bbcd3476aa22de1b997561871"</span></span>
+<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1: Query for the topic "Business" from the past 30 days</span></span>
+<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a>result_business <span class="ot">&lt;-</span> <span class="fu">query_news_api</span>(<span class="at">query =</span> <span class="st">"Business"</span>, <span class="at">from_date =</span> <span class="fu">Sys.Date</span>() <span class="sc">-</span> <span class="dv">30</span>, <span class="at">api_key =</span> api_key)</span>
+<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_business)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 100 × 9
    id        name  author title description url   urlToImage publishedAt content
@@ -488,23 +490,23 @@ $MAE
 10 business… Busi… Isabe… I pu… "Business … http… https://i… 2024-06-13… "Harri…
 # ℹ 90 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2:Query for the topic "Tesla" from 2024-05-30</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>result_tesla <span class="ot">&lt;-</span> <span class="fu">query_news_api</span>(<span class="at">query =</span> <span class="st">"Tesla"</span>, <span class="at">from_date =</span> <span class="dv">2024-05-30</span>, <span class="at">api_key =</span> api_key)</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_tesla)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2:Query for the topic "Tesla" from 2024-05-30</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>result_tesla <span class="ot">&lt;-</span> <span class="fu">query_news_api</span>(<span class="at">query =</span> <span class="st">"Tesla"</span>, <span class="at">from_date =</span> <span class="dv">2024-05-30</span>, <span class="at">api_key =</span> api_key)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_tesla)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 100 × 9
    id        name  author title description url   urlToImage publishedAt content
    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;  
- 1 wired     Wired Aaria… Tesl… "Elon Musk… http… https://m… 2024-06-13… "Under…
- 2 &lt;NA&gt;      [Rem… &lt;NA&gt;   [Rem… "[Removed]" http… &lt;NA&gt;       1970-01-01… "[Remo…
- 3 &lt;NA&gt;      Yaho… Sarah… Tesl… "Tesla is … http… &lt;NA&gt;       2024-05-31… "If yo…
- 4 wired     Wired Boone… Thin… "Plus: Wil… http… https://m… 2024-06-08… "Each …
- 5 &lt;NA&gt;      Gizm… Colli… New … "The Tesla… http… https://i… 2024-05-28… "The T…
- 6 business… Busi… Ana A… Tesl… "Tesla is … http… https://i… 2024-06-06… "Tesla…
- 7 ars-tech… Ars … Jonat… Nvid… "The Tesla… http… https://c… 2024-06-04… "Enlar…
- 8 the-verge The … Andre… The … "The 2024 … http… https://c… 2024-05-30… "ByAnd…
- 9 &lt;NA&gt;      BBC … &lt;NA&gt;   Musk… "He previo… http… https://i… 2024-05-24… "Peter…
-10 &lt;NA&gt;      [Rem… &lt;NA&gt;   [Rem… "[Removed]" http… &lt;NA&gt;       1970-01-01… "[Remo…
+ 1 wired     Wired Aaria… Tesl… Elon Musk … http… https://m… 2024-06-13… "Under…
+ 2 &lt;NA&gt;      [Rem… &lt;NA&gt;   [Rem… [Removed]   http… &lt;NA&gt;       1970-01-01… "[Remo…
+ 3 &lt;NA&gt;      Yaho… Sarah… Tesl… Tesla is n… http… &lt;NA&gt;       2024-05-31… "If yo…
+ 4 wired     Wired Boone… Thin… Plus: Wils… http… https://m… 2024-06-08… "Each …
+ 5 &lt;NA&gt;      Gizm… Colli… New … The Tesla … http… https://i… 2024-05-28… "The T…
+ 6 business… Busi… Ana A… Tesl… Tesla is a… http… https://i… 2024-06-06… "Tesla…
+ 7 ars-tech… Ars … Jonat… Nvid… The Tesla … http… https://c… 2024-06-04… "Enlar…
+ 8 the-verge The … Andre… The … The 2024 J… http… https://c… 2024-05-30… "ByAnd…
+ 9 business… Busi… Lloyd… Tesl… Tesla inve… http… https://i… 2024-06-01… "ALAIN…
+10 &lt;NA&gt;      [Rem… &lt;NA&gt;   [Rem… [Removed]   http… &lt;NA&gt;       1970-01-01… "[Remo…
 # ℹ 90 more rows</code></pre>
 </div>
 </div>
